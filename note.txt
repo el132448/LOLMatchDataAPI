@@ -1,0 +1,3 @@
+some variable should be in other class?
+
+open new class for df & stat?
