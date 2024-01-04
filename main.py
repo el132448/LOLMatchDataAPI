@@ -1,15 +1,12 @@
-import package
+from package import Setting, Data
 
 def main():
     # get setting from database
-    setting = ["大涼粉",'tw2','SEA',100,450,'RGAPI-d0df3f5e-06ee-4b76-ac3c-a2c93d3651aa',
-                      "gfh2NBRvQfamzlVNBVKT7V7AV_4N5aBiPWQODvOvAkkNF6zVbr1D0cmKlWd2uOr5sNGYYGdu80G8-Q",
-                      1623801600,int(package.time.time())]
+    st = Setting.setting
 
     # instantiate Object
-    player = package.Setting(setting[0],setting[1],setting[2],setting[3],setting[4],setting[5],
-                      setting[6],setting[7],setting[8])
-
+    player = Data(st[0],st[1],st[2],st[3],st[4],st[5],st[6],st[7],st[8])
+    
     # choose mode
     player.chooseMode()
     

@@ -2,11 +2,17 @@ import requests
 import pandas as pd
 import datetime
 import time
-from UliPlot.XLSX import auto_adjust_xlsx_column_width
 import os.path
-# import math
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+# from UliPlot.XLSX import auto_adjust_xlsx_column_width
 
-class Setting: 
+class Setting:
+    setting = ["大涼粉",'tw2','SEA',100,450,'RGAPI-d0df3f5e-06ee-4b76-ac3c-a2c93d3651aa',
+                "gfh2NBRvQfamzlVNBVKT7V7AV_4N5aBiPWQODvOvAkkNF6zVbr1D0cmKlWd2uOr5sNGYYGdu80G8-Q",
+                1623801600,int(time.time())]
+
+class Data: 
     def __init__(self, summoner_name: str, region: str, mass_region, no_games, queue_id, api_key, puuid, startTime, endTime):
         self.summoner_name = summoner_name
         self.region = region
@@ -272,6 +278,23 @@ class Setting:
             print('Statistic ready!')
     #=============================================================================================================
     #=============================================================================================================
+    def adjustExcelColumnWidth():
+        wb = load_workbook('output.xlsx')
+
+        for ws in ['data', 'mean', 'gpByChamMean']:
+            for col_number in range(1, wb[ws].max_column + 1):
+                col_letter = get_column_letter(col_number)
+                max_width = 0
+                for row_number in range(1, wb[ws].max_row + 1): # wb[ws].max_row + 1
+                    # print(wb[ws][f'{letter}{row_number}'].value)
+                    if len(str(wb[ws][f'{col_letter}{row_number}'].value)) > max_width:
+                        max_width = len(str(wb[ws][f'{col_letter}{row_number}'].value))
+                wb[ws].column_dimensions[col_letter].width = max_width + 4
+
+        wb.save('output.xlsx')
+        print("Excel column width adjusted!")
+    #=============================================================================================================
+    #=============================================================================================================
     # output as excel & csv
     def outputAsExcel(self):
         if self.df.empty == True:
@@ -286,13 +309,17 @@ class Setting:
             with pd.ExcelWriter(fileName + ".xlsx") as writer:
                 self.df.set_index("matchId", inplace=True)
                 self.df.to_excel(writer, sheet_name="data")
-                auto_adjust_xlsx_column_width(self.df, writer, sheet_name="data", margin=3)
+                # auto_adjust_xlsx_column_width(self.df, writer, sheet_name="data", margin=3)
 
                 mean.to_excel(writer, sheet_name="mean")
-                auto_adjust_xlsx_column_width(mean, writer, sheet_name="mean", margin=3)
+                # auto_adjust_xlsx_column_width(mean, writer, sheet_name="mean", margin=3)
 
                 gpByChamMean.to_excel(writer, sheet_name="gpByChamMean") 
-                auto_adjust_xlsx_column_width(gpByChamMean, writer, sheet_name="gpByChamMean", margin=3)
+                # auto_adjust_xlsx_column_width(gpByChamMean, writer, sheet_name="gpByChamMean", margin=3)
+
+            # adjust column width
+            Data.adjustExcelColumnWidth()
+
             print('Output excel succeed!')
     #=============================================================================================================
     #=============================================================================================================
